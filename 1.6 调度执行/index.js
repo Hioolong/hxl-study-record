@@ -97,13 +97,44 @@ const cleanup = (effectFn) => {
   effectFn.deps.length = 0
 }
 
+// 控制执行顺序
+
+// effect(() => {
+//   console.log(obj.num)
+// }, {
+//   scheduler(fn) {
+//     setTimeout(fn)
+//   }
+// })
+// obj.num++
+// console.log('finish')
+
+// 控制执行次数，使用 Promise 将更新任务放置浏览器同一个事件循环里异步执行
+// 这样就算在一次同步过程修改了 n 次数据，最终只会触发最后一次数据的视图更新
+// 实际上Vue实现的连续修改多次数据，只更新一次的实现原理跟这差不多，只不过实现了更加完善的调度器
+
+const jobQueue = new Set()
+const p = Promise.resolve()
+let isFlushing = false
+const flushJob = () => {
+  if (isFlushing) return;
+  isFlushing = true
+  p
+    .then(() => {
+      jobQueue.forEach(fn => fn())
+    })
+    .finally(() => {
+      isFlushing = false
+    })
+}
 
 effect(() => {
   console.log(obj.num)
 }, {
   scheduler(fn) {
-    setTimeout(fn)
+    jobQueue.add(fn)
+    flushJob()
   }
 })
 obj.num++
-console.log('finish')
+obj.num++
