@@ -10,6 +10,7 @@ let activeEffect
 
 /**
  * 为了建立响应式数据的属性和副作用函数的联系，需要重新设计桶的数据结构
+ * 为何使用 WeakMap？因为 weakmap 对 key 是弱引用，会在无引用时被垃圾回收器清除，防止内存溢出
  * weakMap: 响应式数据 => map
  * map: 响应式数据key => set
  * set: 副作用函数合集
