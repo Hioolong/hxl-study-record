@@ -1,0 +1,46 @@
+<body></body>
+<script>
+  Function.prototype.myCall = function(context = window) {
+    const fnKey = Symbol('fn')
+    context[fnKey] = this
+    const args = [...arguments].slice(1)
+    const res = context[fnKey](...args)
+    delete context[fnKey]
+    return res;
+  }
+
+  Function.prototype.myApply = function(context = window) {
+    const fnKey = Symbol('fn')
+    context[fnKey] = this
+    const args = arguments[1]
+    const res = args && args.length ? context[fnKey](...args) : context[fnKey]()
+    delete context[fnKey]
+    return res;
+  }
+
+  Function.prototype.myBind = function(context = window) {
+    const self = this;
+    const args = [...arguments].slice(1)
+    return function () {
+      return self.apply(context, [...args, ...arguments])
+    }
+  }
+
+  const person = {
+    name: 'ronney'
+  }
+  function getName(age, sex) {
+    console.log(this.name, age, sex)
+  }
+
+  getName()
+
+  getName.myCall(person, 26, 'female')
+
+  getName.apply(person, [27, 'male'])
+
+  const getPersonName = getName.myBind(person, 25)
+
+  getPersonName('femail')
+
+</script>
