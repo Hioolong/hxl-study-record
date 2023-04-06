@@ -1,0 +1,38 @@
+<body>
+  
+</body>
+
+<script>
+  function Person(name, age) {
+    this.name = name
+    this.age = age
+  }
+  Person.prototype.strength = 60
+  Person.prototype.sayMyName = function() {
+    console.log(`I am ${this.name}`)
+  }
+
+  const person1 = new Person('Ronney', 26)
+  console.log('person1: ', person1.age, person1.name, person1.strength)
+  person1.sayMyName()
+
+  /**
+   * new主要三个过程
+   * 1. 创建新的对象
+   * 2. 将构造函数this指向该对象
+   * 3. 将该对象的原型指向构造函数的原型
+   * 4. 如果构造函数有返回对象，则返回该对象，否则返回新创建的对象
+  */
+  function myNew() {
+    const obj = new Object()
+    // 获取构造函数
+    const constructor = [].shift.call(arguments);
+    obj.__proto__ = constructor.prototype
+    const res = constructor.apply(obj, arguments)
+    return typeof res === 'object' ? res : obj
+  }
+
+  const person2 = myNew(Person, 'Jeremy', 30)
+  console.log('person2: ', person2.age, person2.name, person2.strength)
+  person2.sayMyName()
+</script>
