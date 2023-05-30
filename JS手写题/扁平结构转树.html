@@ -8,8 +8,101 @@
     { id: 5, name: '部门5', pid: 3},
     { id: 6, name: '部门6', pid: 5},
   ]
-  /** ----- 递归实现 ----- */
-  const getChildren = (data, result, pid) => {
+
+  const transform = (source, pid) => {
+    const getChildren = (source, result, pid) => {
+      for (const item of source) {
+        if (item.pid === pid) {
+          const newItem = {...item, children: []}
+          result.push(newItem)
+          getChildren(source, newItem.children, item.id)
+        }
+      }
+    }
+
+    const result = []
+    getChildren(source, result, pid)
+    return result;
+  }
+
+  const transform2 = (source) => {
+    const result = [];
+    const map = {};
+    for (const item of source) {
+      map[item.id] = {...item, children: []}
+    }
+
+    for (const item of source) {
+      const id = item.id
+      const pid = item.pid
+      const treeItem = map[id]
+      if (pid === 0) {
+        result.push(treeItem)
+      } else {
+        map[pid].children?.push(treeItem)
+      }
+    }
+
+    return result;
+  }
+
+  const transform3 = (source) => {
+    const result = [];
+    const map = {};
+    for (const item of source) {
+      const id = item.id;
+      const pid = item.pid;
+      
+      map[id] = { ...item, children: [] }
+
+      const treeItem = map[id];
+
+      if (pid === 0) {
+        result.push(treeItem)
+      } else {
+        map[pid].children.push(treeItem)
+      }
+    }
+
+    return result;
+  }
+
+  // 递归实现
+  const data1 = transform(arr, 0)
+  console.log('递归实现111', data1)
+  const data22 = transform2(arr)
+  console.log('借助Map实现', data22)
+  const data33 = transform3(arr)
+  console.log('借助Map一次遍历实现', data33)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   /** ----- 递归实现 ----- */
+   const getChildren = (data, result, pid) => {
     for(const item of data) {
       if (item.pid === pid) {
         const newItem = {...item, children: []}
@@ -52,8 +145,7 @@
     }
 
     return result;
-  }
-
+  } 
   const data2 = arrayToTree2(arr)
-  console.log('map实现：', data2)
+  console.log('map实现：', data2)  
 </script>

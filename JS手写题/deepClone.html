@@ -1,0 +1,100 @@
+<body>
+  
+</body>
+<script>
+  /**
+   *  实现思路：
+   *  1. 判断数据类型
+   *  2. 对象 or 数组的话我们就新建一个对象 or 数组，然后遍历目标元素，逐一添加元素的属性，
+   *     如果属性仍是引用类型，则递归进行处理。
+   *  3. 循环引用处理：如果对象存在循环引用情况，则可通过 WeakMap 记录已经处理过的属性，后续递归过程中，先检查当前属性是否存在 WeakMap 里，
+   *     如果存在，则直接从 WeakMap 里取
+   *  4. Map、Set、Date、Regexp 等数据类型，可直接新建一个实例
+   *  5. 函数类型可直接返回，实际上对象可共用一个内存地址的函数，lodash 也是直接返回的。
+   *  6. 考虑性能，如何遍历对象 or 数组效率最高？答案是使用 while 语句，性能排行如下👇
+   *     while > for > for in 
+   **/
+
+  function isObject(target) {
+    const type = typeof target;
+    return type !== null && (type === "object" || type === "function")
+  }
+
+  function initType(target) {
+    const Cons = target.constructor;
+    return new Cons()
+  }
+
+  function forEach(array, iterate) {
+    let index = -1;
+    const length = array.length;
+    while(++index < length) {
+      iterate(array[index], index)
+    }
+    return array;
+  }
+
+  function deepClone(target, hash = new WeakMap()) {
+    if(target instanceof Date) return new Date(target)
+    if (target instanceof RegExp) return new RegExp(target)
+    if (!isObject(target)) return target;
+
+    const isArray = Array.isArray(target);
+    const cloneTarget = initType(target)
+
+    if (hash.has(target)) {
+      return hash.get(target)
+    }
+    hash.set(target, cloneTarget)
+
+    // 处理 Set
+    if (target instanceof Set) {
+      target.forEach((val) => {
+        cloneTarget.add(deepClone(val, hash))
+      })
+      return cloneTarget;
+    }
+
+    // 处理 Map
+    if (target instanceof Map) {
+      target.forEach((val, key) => {
+        cloneTarget.set(key, deepClone(val, hash))
+      })
+      return cloneTarget
+    }
+
+    // 处理对象 && 数组
+    const keys = isArray ? undefined : Object.keys(target);
+    forEach(keys || target, (value, key) => {
+      if (keys) {
+        key = value
+      }
+      cloneTarget[key] = isObject(target[key]) && typeof target[key] !== "function"
+        ? deepClone(target[key], hash)
+        : target[key]
+    })
+
+    return cloneTarget;
+  }
+
+  const obj = {
+    a: 1,
+    b: undefined,
+    c: {
+      c1: 'c1'
+    },
+    d: [1,2,3],
+    s: new Set([1,2]),
+    m: new Map([[1, 'one']])
+  }
+  obj.circle = obj;
+
+
+  const cloneObj1 = deepClone(obj)
+  cloneObj1.a = 2;
+  cloneObj1.d.push(4)
+  cloneObj1.s.add(3)
+  cloneObj1.m.set(2, 'two')
+  console.log('obj:', obj)
+  console.log('cloneObj', cloneObj1)
+</script>
