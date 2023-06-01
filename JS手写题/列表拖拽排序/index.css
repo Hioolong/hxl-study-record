@@ -1,0 +1,35 @@
+.draggable-list-wrapper {
+  padding: 0;
+  margin: 0;
+  width: 500px;
+  margin: 50px auto;
+  box-shadow: 1px 3px 5px #666;
+  padding: 10px 30px 30px;
+  background: #fff;
+}
+
+.draggable-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.draggable-item {
+  background-color: #fff;
+  height: 50px;
+  line-height: 50px;
+  border: 1px solid #ddd;
+  padding: 0 15px;
+  margin-top: 20px;
+  border-radius: 8px;
+}
+
+.draggable-item p {
+  margin: 0;
+}
+
+.dragging {
+  opacity: 0.5;
+  color: skyblue;
+  background-color: skyblue;
+}
