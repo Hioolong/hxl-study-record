@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <style>
+    .img-wrapper {
+      width: 500px;
+    }
+    .img-wrapper img {
+      width: inherit;
+      height: inherit;
+    }
+    .hide {
+      display: none;
+    }
+    .show {
+      display: initial;
+    }
+  </style>
+</head>
+<body>
+  
+  <input id="fileInput" type="file" value="请选择文件" />
+
+  <div class="img-wrapper">
+    <img id="originalImg" class="hide" alt="原始图片">
+  </div>
+
+  <div class="img-wrapper">
+    <img id="compressImg" class="hide" alt="压缩图片">
+  </div>
+
+  <script src="./index.js"></script>
+</body>
+</html>
